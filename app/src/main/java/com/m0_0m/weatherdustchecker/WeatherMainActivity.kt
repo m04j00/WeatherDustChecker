@@ -5,7 +5,7 @@ import android.os.Bundle
 import androidx.appcompat.app.ActionBar
 
 
-class MainActivity : AppCompatActivity(){
+class WeatherMainActivity : AppCompatActivity(){
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.weather_main_activity)
@@ -14,12 +14,11 @@ class MainActivity : AppCompatActivity(){
 
         val transaction = supportFragmentManager.beginTransaction()
 
-        transaction.add(R.id.fragment_container, WeatherPageFragment.newInstance("화창", 10.0))
+        transaction.add(R.id.fragment_container, WeatherPageFragment.newInstance(37.39298982923837, 129.22029298574122))
 
         transaction.commit()
+
+        val personJSONString = """{ "name": "John", "age": 20, "address": { "city": "Seoul" } }"""
+
     }
-
-
-
-
 }

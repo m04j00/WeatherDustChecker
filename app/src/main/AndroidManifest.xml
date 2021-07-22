@@ -2,8 +2,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.m0_0m.weatherdustchecker">
 
-    <uses-permission android:name="android.permission.INJECT"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <!-- 추가된 권한 정보 -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <!-- 추가 권한 요청 : 위치 접근 권한 -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
 
     <application
         android:usesCleartextTraffic="true"
@@ -13,7 +18,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.WeatherDustChecker">
-        <activity android:name=".MainActivity">
+        <activity android:name=".WeatherMainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
