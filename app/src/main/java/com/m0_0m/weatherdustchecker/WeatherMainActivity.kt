@@ -14,11 +14,12 @@ class WeatherMainActivity : AppCompatActivity(){
 
         val transaction = supportFragmentManager.beginTransaction()
 
-        transaction.add(R.id.fragment_container, WeatherPageFragment.newInstance(37.39298982923837, 129.22029298574122))
+        //transaction.add(R.id.fragment_container, WeatherPageFragment.newInstance(37.39298982923837, 129.22029298574122))
+        transaction.add(R.id.fragment_container, DustPageFragment.newInstance(37.39298982923837, 129.22029298574122))
 
         transaction.commit()
 
-        val personJSONString = """{ "name": "John", "age": 20, "address": { "city": "Seoul" } }"""
+        //val personJSONString = """{ "name": "John", "age": 20, "address": { "city": "Seoul" } }"""
 
     }
 }
