@@ -57,7 +57,8 @@ class DustPageFragment : Fragment() {
     data class DustCheckResponse(val pm10: Int?, val pm25: Int?, val pm10Status: String, val pm25status: String)
 
     class DustCheckerResponseDeserializer : StdDeserializer<DustCheckResponse>(DustCheckResponse::class.java){
-/*        private fun checkCategory(aqi: Int?) : String {
+        /*
+           private fun checkCategory(aqi: Int?) : String {
             // null 이면 "알 수 없음"
             // 0 ~ 100 사이 값이면 "좋음"
             // 101 ~ 200 사이 값이면 "보통"
@@ -72,7 +73,8 @@ class DustPageFragment : Fragment() {
                 if(aqi in 201 .. 300)   return "나쁨"
                 return "매우 나쁨"
             }
-        }*/
+        }
+        */
 
         private val checkCategory = {
             aqi : Int? -> when(aqi){
@@ -89,9 +91,9 @@ class DustPageFragment : Fragment() {
 
             // 여기서부터 내부 데이터 추출 코드 작성
             var datanode = node?.get("data")
-            var iapinode = datanode?.get("iapi")
-            var pm10node = iapinode?.get("pm10")
-            var pm25node = iapinode?.get("pm25")
+            var iaqinode = datanode?.get("iaqi")
+            var pm10node = iaqinode?.get("pm10")
+            var pm25node = iaqinode?.get("pm25")
             var pm10v = pm10node?.get("v")?.asInt()
             var pm25v = pm25node?.get("v")?.asInt()
 
