@@ -59,6 +59,30 @@
             android:layout_gravity="center"
             android:textSize="16sp" />
 
+        <TextView
+            android:id="@+id/dust_co_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_gravity="center"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/dust_o3_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_gravity="center"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/dust_no2_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_gravity="center"
+            android:textSize="16sp" />
+
     </LinearLayout>
 
 </ScrollView>
