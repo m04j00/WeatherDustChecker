@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.DeserializationContext
@@ -16,17 +17,26 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import com.google.gson.GsonBuilder
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import java.net.URL
 
 @Suppress("DEPRECATION")
 class DustPageFragment : Fragment() {
-    private val APP_TOKEN = ""
+    private val APP_TOKEN = "65b74595bd8ed6def7f63b4a9a8655312fd602d1"
 
     lateinit var statusImage : ImageView
     lateinit var pm25StatusText : TextView
     lateinit var pm25IntensivyText : TextView
     lateinit var pm10StatusText : TextView
     lateinit var pm10IntensivyText : TextView
+    lateinit var coText: TextView
+    lateinit var o3Text: TextView
+    lateinit var no2Text: TextView
 
     companion object {
         fun newInstance(lat : Double, lon : Double) : DustPageFragment {
@@ -49,13 +59,16 @@ class DustPageFragment : Fragment() {
         pm25IntensivyText = view.findViewById<TextView>(R.id.dust_pm25_intensity_text)
         pm10StatusText = view.findViewById<TextView>(R.id.dust_pm10_status_text)
         pm10IntensivyText = view.findViewById<TextView>(R.id.dust_pm10_intensity_text)
+        coText = view.findViewById(R.id.dust_co_text)
+        o3Text = view.findViewById(R.id.dust_o3_text)
+        no2Text = view.findViewById(R.id.dust_no2_text)
 
         return view
     }
 
-    @JsonDeserialize(using=DustCheckerResponseDeserializer::class)
-    data class DustCheckResponse(val pm10: Int?, val pm25: Int?, val pm10Status: String, val pm25status: String)
 
+    //data class DustCheckResponse(val pm10: Int?, val pm25: Int?, val pm10Status: String, val pm25status: String)
+/*
     class DustCheckerResponseDeserializer : StdDeserializer<DustCheckResponse>(DustCheckResponse::class.java){
         /*
            private fun checkCategory(aqi: Int?) : String {
@@ -103,12 +116,58 @@ class DustPageFragment : Fragment() {
         }
 
     }
+
+ */
     @SuppressLint("UseRequireInsteadOfGet")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         val lat = arguments!!.getDouble("lat")
         val lon = arguments!!.getDouble("lon")
+
+        val retrofit = Retrofit.Builder()
+                .baseUrl("http://api.waqi.info")
+                .addConverterFactory(GsonConverterFactory.create(
+                        GsonBuilder().registerTypeAdapter(
+                                DustCheckResponseFromGSON::class.java,
+                                DustCheckerResponseDeserializerGSON()
+                        ).create()
+                ))
+                .build()
+        val apiService = retrofit.create(DustCheckAPIService::class.java)
+
+        val apiCall = apiService.getDustStatusInfo(lat, lon, APP_TOKEN)
+
+        apiCall.enqueue(object : Callback<DustCheckResponseFromGSON> {
+            override fun onResponse(call: Call<DustCheckResponseFromGSON>, response: Response<DustCheckResponseFromGSON>) {
+                val data = response.body()!!
+
+                if(data != null) {
+                    // (1)
+                    statusImage.setImageResource(when (data.pm25status) {
+                        "좋음" -> R.drawable.good
+                        "보통" -> R.drawable.normal
+                        "나쁨" -> R.drawable.bad
+                        else -> R.drawable.very_bad
+                    })
+                }
+
+                pm25IntensivyText.text = data.pm25?.toString() ?: "알 수 없음"
+                pm25StatusText.text = "${data.pm25status} (초미세먼지)"
+                pm10IntensivyText.text = data.pm10?.toString() ?: "알 수 없음"
+                pm10StatusText.text = "${data.pm10Status} (미세먼지)"
+                coText.text = "일산화탄소 : ${data.co}" ?: "알 수 없음"
+                o3Text.text = "오존 : ${data.o3}" ?: "알 수 없음"
+                no2Text.text = "이산화질소 : ${data.no2}" ?: "알 수 없음"
+            }
+
+            override fun onFailure(call: Call<DustCheckResponseFromGSON>, t: Throwable) {
+                Toast.makeText(activity,"요청에 실패하였습니다.", Toast.LENGTH_SHORT).show()
+            }
+
+        })
+
+        /*
         val url = "http://api.waqi.info/feed/geo:${lat};${lon}/?token=${APP_TOKEN}"
 
         APICall(object : APICall.APICallback {
@@ -134,5 +193,7 @@ class DustPageFragment : Fragment() {
                 pm10StatusText.text = "${data.pm10Status} (미세먼지)"
             }
         }).execute(URL(url))
+
+         */
     }
 }
